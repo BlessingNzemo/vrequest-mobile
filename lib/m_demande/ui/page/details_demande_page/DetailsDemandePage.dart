@@ -33,12 +33,12 @@ class _DetailsDemandePageState extends ConsumerState<DetailsDemandePage> {
   @override
   Widget build(BuildContext context) {
     var state = ref.watch(detailsDemandeCtrlProvider);
+    var ticket =(state.demande != null) ?  "(${state.demande?.ticket})" : "";
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Ma Demande",
+          "Ma Demande $ticket",
         ),
-        centerTitle: true,
         actions: [
           IconButton(
               onPressed: () {
@@ -82,14 +82,15 @@ class _DetailsDemandePageState extends ConsumerState<DetailsDemandePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
+                  "Date de la course",
+                  style: TextStyle(fontSize: 20.00),
+                ),
+                Text(
                   "${dateDeplacement!.day.toString().padLeft(2, '0')}-${dateDeplacement.month.toString().padLeft(2, '0')}-${dateDeplacement.year.toString().padLeft(4, '0')}",
                   style:
                       TextStyle(fontSize: 22.00, fontWeight: FontWeight.bold),
                 ),
-                Text(
-                  "Date de la course",
-                  style: TextStyle(fontSize: 20.00),
-                ),
+
               ],
             ),
           ),
@@ -160,94 +161,47 @@ class _DetailsDemandePageState extends ConsumerState<DetailsDemandePage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero,
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
+              child:
+                  Padding(
+                padding: EdgeInsets.all(16.00),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Détails de la demande",
-                      style: TextStyle(
-                          fontSize: 18.00, fontWeight: FontWeight.bold),
-                    ),
-                    Divider(),
+                    _details(demande.motif, "Motif", Icons.info),
                     SizedBox(
-                      height: 10,
+                      height: 15,
+                    ),
+                    _details(demande.nbrePassagers, "Nombre des passagers",
+                        Icons.numbers),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    _details(demande.lieuDepart, 'Lieu de départ',
+                        Icons.location_on),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    _details(demande.destination, "Déstination", Icons.flag),
+                    SizedBox(
+                      height: 15,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Icon(Icons.star),
                         Text(
-                          "${date!.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')}\n${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}",
+                          "status",
+                          style: TextStyle(fontSize: 12.00),
+                        ),
+                        SizedBox(width: 10,),
+                        Text(
+                          "${_getStatus(demande.status)}",
                           style: TextStyle(
-                              fontSize: 16.00, fontWeight: FontWeight.w400),
+                              color: demande.status != '1'
+                                  ? Colors.grey
+                                  : Colors.green,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.00),
                         ),
-                        Text(
-                          "Date de la demande",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            demande.motif,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 5,
-                            style: TextStyle(
-                                fontSize: 16.00, fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                        Text(
-                          "Motif",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "${demande.nbrePassagers} passagers",
-                      style: TextStyle(
-                          fontSize: 16.00, fontWeight: FontWeight.w400),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "${_jourEnLettre(dateDeplacement!.weekday)}\n${dateDeplacement.day.toString().padLeft(2, '0')}-${dateDeplacement.month.toString().padLeft(2, '0')}-${dateDeplacement.year.toString().padLeft(4, '0')}\n${dateDeplacement.hour.toString().padLeft(2, '0')}:${dateDeplacement.minute.toString().padLeft(2, '0')}",
-                          style: TextStyle(
-                              fontSize: 16.00, fontWeight: FontWeight.w400),
-                        ),
-                        Text(
-                          "Date de la course",
-                          style: TextStyle(fontSize: 16.00),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("${_getStatus(demande.status)}", style: TextStyle(
-                          color: demande.status != '1' ? Colors.grey : Colors.green, fontWeight: FontWeight.w400, fontSize: 16.00
-                        ),),
-                        Text("status", style: TextStyle(fontSize: 16.00),)
                       ],
                     )
                   ],
@@ -318,29 +272,25 @@ class _DetailsDemandePageState extends ConsumerState<DetailsDemandePage> {
         child: Center(child: CircularProgressIndicator()));
   }
 
-  _lieuInfo(lieu, label) {
+  _details(text, label, icon) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Icon(Icons.location_on),
+        Icon(icon),
+        SizedBox(
+          width: 5,
+        ),
+        Text(
+          "$label",
+          style: TextStyle(fontSize: 12),
+        ),
+        SizedBox(width: 10.00,),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0, left: 8.0),
-                child: Text(
-                  "$lieu",
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, bottom: 5.0),
-                child: Text(
-                  "$label",
-                  style: TextStyle(fontSize: 12),
-                ),
-              ),
-            ],
+          child: Text(
+            "$text",
+            overflow: TextOverflow.visible,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.00),
           ),
         )
       ],
