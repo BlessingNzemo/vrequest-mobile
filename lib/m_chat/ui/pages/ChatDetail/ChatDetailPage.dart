@@ -17,6 +17,7 @@ import 'package:odc_mobile_project/utils/plugins/zoombuttons_plugin.dart';
 import 'package:odc_mobile_project/utils/widgets/bottom_sheet_button_maps.dart';
 import 'package:odc_mobile_project/utils/widgets/bottom_sheet_course.dart';
 import 'package:odc_mobile_project/utils/widgets/bottom_sheet_dummy_ui.dart';
+import 'package:odc_mobile_project/utils/widgets/bottom_sheet_empty.dart';
 import 'package:odc_mobile_project/utils/widgets/bottom_sheet_grid.dart';
 import 'package:odc_mobile_project/utils/widgets/draggable_sheet.dart';
 
@@ -57,23 +58,23 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage>
 
       var ctrlState = ref.watch(chatDetailCtrlProvider);
       ctrlState.courseStarted =
-          (widget.chatUsersModel.course.startedAt != null) ? true : false;
+      (widget.chatUsersModel.course.startedAt != null) ? true : false;
       ctrlState.courseClosed =
-          (widget.chatUsersModel.course.endedAt != null) ? true : false;
+      (widget.chatUsersModel.course.endedAt != null) ? true : false;
     });
   }
 
   static final MapController _mapController = MapController();
 
   Marker buildPin(LatLng point, Widget marker) => Marker(
-        point: point,
-        width: 60,
-        height: 60,
-        child: GestureDetector(
-          onTap: () => _animatedMapMove(point, 17),
-          child: marker,
-        ),
-      );
+    point: point,
+    width: 60,
+    height: 60,
+    child: GestureDetector(
+      onTap: () => _animatedMapMove(point, 17),
+      child: marker,
+    ),
+  );
 
   static const _startedId = 'AnimatedMapController#MoveStarted';
   static const _inProgressId = 'AnimatedMapController#MoveInProgress';
@@ -95,7 +96,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage>
     // The animation determines what path the animation will take. You can try different Curves values, although I found
     // fastOutSlowIn to be my favorite.
     final Animation<double> animation =
-        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+    CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
 
     // Note this method of encoding the target destination is a workaround.
     // When proper animated movement is supported (see #1263) we should be able
@@ -236,19 +237,15 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage>
       ),
     ];
     late final _polylines =
-        Map.fromEntries(_polylinesRaw.map((e) => MapEntry(e.hitValue, e)));
+    Map.fromEntries(_polylinesRaw.map((e) => MapEntry(e.hitValue, e)));
 
     return Scaffold(
       // backgroundColor: const Color(0xfff6f6f6),
       appBar: _appBar(context, widget, ref),
-      body: Column(
+      body: Stack(
         children: [
-          Stack(
-            children: [
-              _map(_mapController),
-              _bottomSheet(),
-            ],
-          ),
+          _map(_mapController),
+          _bottomSheet(),
         ],
       ),
     );
@@ -314,9 +311,10 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage>
       ),
     ];
     late final _polylines =
-        Map.fromEntries(_polylinesRaw.map((e) => MapEntry(e.hitValue, e)));
+    Map.fromEntries(_polylinesRaw.map((e) => MapEntry(e.hitValue, e)));
 
-    return Flexible(
+    return Container(
+      height: double.infinity,
       child: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
@@ -364,8 +362,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage>
         children: [
           if (auth != null && auth.any((e) => e.contains('chauffeur')))
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 2.0, horizontal: 2.0),
+              padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 2.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
                 child: BottomSheetCourse(
@@ -390,6 +387,8 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage>
             vehicleDialog: _vehicleDialog,
             membersDialog: _peopleDialog,
           ),
+          if (auth != null && !auth.any((e) => e.contains('chauffeur')))
+            BottomSheetEmpty(),
         ],
       ),
     );
@@ -397,11 +396,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage>
 }
 
 AppBar _appBar(BuildContext context, widget, WidgetRef ref) {
-  var title = widget.chatUsersModel.demande.initiateur!.prenom +
-      " " +
-      widget.chatUsersModel.demande.initiateur!.nom +
-      " #" +
-      widget.chatUsersModel.demande.id.toString();
+  var title = widget.chatUsersModel.demande.ticket;
 
   return AppBar(
     leadingWidth: 80,
@@ -601,7 +596,7 @@ class _CustomListTile extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 5,
                       backgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
+                      Theme.of(context).scaffoldBackgroundColor,
                       child: Container(
                         width: 15,
                         margin: EdgeInsets.all(2.0),
