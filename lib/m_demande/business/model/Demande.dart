@@ -108,11 +108,11 @@ class Demande {
               ),
         longitude: "${json["longitude"]}" ?? "",
         latitude: "${json["latitude"]}" ?? "",
-        longitudelDestination: json["longitudelDestination"] != null
-            ? json["longitudelDestination"].toDouble()
+        longitudelDestination: json["longitude_destination"] != null
+            ? json["longitude_destination"].toDouble()
             : 0.0,
-        latitudeDestination: json["latitudeDestination"] != null
-            ? json["latitudeDestination"].toDouble()
+        latitudeDestination: json["latitude_destination"] != null
+            ? json["latitude_destination"].toDouble()
             : 0.0,
         longitudelDepart: json["longitude_depart"] != null
             ? json["longitude_depart"].toDouble()
