@@ -201,8 +201,9 @@ class MapPageState extends ConsumerState<MapPage>
             print("Nom du lieu est ${nom}");
 
             setState(() {
-              lieuDepart_ctrl.text = nom;
+
               if (state.mouvement == 1) {
+                lieuDepart_ctrl.text = nom;
                 ctrl.recupereLieuDepart(Site(
                   latitude: p.latitude,
                   longitude: p.longitude,

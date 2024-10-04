@@ -509,7 +509,10 @@ class _AccueilPageState extends ConsumerState<AccueilPage> {
         IconButton(
           onPressed: () {
             var ctrl = ref.read(accueilPageCtrlProvider.notifier);
+            ctrl.getUser();
             ctrl.nombreDemande();
+            ctrl.recentDemande();
+
           },
           icon: Icon(Icons.sync),
         )
